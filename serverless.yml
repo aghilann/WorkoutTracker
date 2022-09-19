@@ -22,28 +22,33 @@ frameworkVersion: "3"
 
 provider:
   name: aws
-  runtime: nodejs12.x
-  lambdaHashingVersion: 20201221
+  runtime: nodejs16.x
 
   # you can overwrite defaults here
   #  stage: dev
   #  region: us-east-1
 
   # you can add statements to the Lambda function's IAM Role here
-  #  iamRoleStatements:
-  #    - Effect: "Allow"
-  #      Action:
-  #        - "s3:ListBucket"
-  #      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-  #    - Effect: "Allow"
-  #      Action:
-  #        - "s3:PutObject"
-  #      Resource:
-  #        Fn::Join:
-  #          - ""
-  #          - - "arn:aws:s3:::"
-  #            - "Ref" : "ServerlessDeploymentBucket"
-  #            - "/*"
+  # iamRoleStatements:
+  #   - Effect: "Allow"
+  #     Action:
+  #       - "s3:GetObject"
+  #       - "s3:PutObject"
+  #     Resource:
+  #       Fn::Join:
+  #         - ""
+  #         - - "arn:aws:s3:::"
+  #           - "Ref": "aghilans-workout-bucket"
+  #           - "/*"
+
+  #   - Effect: "Allow"
+  #     Action:
+  #       - "s3:ListBucket"
+  #     Resource:
+  #       Fn::Join:
+  #         - ""
+  #         - - "arn:aws:s3:::"
+  #           - "aghilans-workout-bucket"
 
   iam:
     role:
@@ -82,24 +87,24 @@ functions:
       - httpApi:
           path: /workout/{id}
           method: get
-  # updateWorkout:
-  #   handler: src/handlers.updateWorkout
-  #   events:
-  #     - httpApi:
-  #         path: /workout/{id}
-  #         method: put
-  # deleteWorkout:
-  #   handler: src/handlers.deleteWorkout
-  #   events:
-  #     - httpApi:
-  #         path: /workout/{id}
-  #         method: delete
-  # listWorkout:
-  #   handler: src/handlers.listWorkout
-  #   events:
-  #     - httpApi:
-  #         path: /workouts
-  #         method: get
+  updateWorkout:
+    handler: src/handlers.updateWorkout
+    events:
+      - httpApi:
+          path: /workout/{id}
+          method: put
+  deleteWorkout:
+    handler: src/handlers.deleteWorkout
+    events:
+      - httpApi:
+          path: /workout/{id}
+          method: delete
+  listWorkouts:
+    handler: src/handlers.listWorkouts
+    events:
+      - httpApi:
+          path: /workout
+          method: get
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
@@ -145,11 +150,6 @@ plugins:
   - serverless-plugin-typescript
 # you can add CloudFormation resource templates here
 #resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
 #  Outputs:
 #     NewOutput:
 #       Description: "Description for the output"
@@ -169,3 +169,7 @@ resources:
         KeySchema:
           - AttributeName: workoutID
             KeyType: HASH
+    # WorkoutsBucket:
+    #   Type: AWS::S3::Bucket
+    #   Properties:
+    #     BucketName: aghilans-workout-bucket

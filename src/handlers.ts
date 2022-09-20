@@ -1,4 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+import { Exercise, WorkoutSchema } from "./schema";
 
 import AWS from "aws-sdk";
 import { v4 } from "uuid";
@@ -19,9 +20,9 @@ const getWorkoutByID = async (id: string) => {
 };
 
 export const createWorkout = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  const reqBody = JSON.parse(event.body as string);
+  const reqBody: { exercises: Exercise[] } = JSON.parse(event.body as string);
 
-  const workout = {
+  const workout: WorkoutSchema = {
     workoutID: v4(),
     ...reqBody,
   };
